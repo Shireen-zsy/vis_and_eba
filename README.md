@@ -1,1 +1,3 @@
-# vis_and_eba
+# Visualization and EDA
+
+Some code from this topic in P8105.
