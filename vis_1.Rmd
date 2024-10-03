@@ -14,7 +14,7 @@ library(patchwork)
 
 Import weather data
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 weather_df = read_csv("weather_df.csv")
 weather_df = 
   mutate( weather_df,
@@ -31,19 +31,19 @@ weather_df =
 
 Make our first plot
 
-```{r make plot}
+```{r make plot, message = FALSE, warning = FALSE}
 ggplot(weather_df, aes(x = tmin, y = tmax)) +
   geom_point()
 
 ```
 
-```{r makeplot}
+```{r makeplot, message = FALSE, warning = FALSE}
 weather_df |> 
   ggplot(aes(x = tmin, y = tmax)) +
   geom_point()
 
 ```
-```{r}
+```{r, message = FALSE, warning = FALSE}
 ggp_weather_scatterplot = 
   weather_df |> 
   ggplot(aes(x = tmin, y = tmax)) +
@@ -51,6 +51,71 @@ ggp_weather_scatterplot =
 
 ggp_weather_scatterplot
 ```
+
+Check why some rows are missing.
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  filter(is.na(tmax))
+```
+
+## Fancier scatterplots!
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + # 3line
+  geom_point(alpha = .3, size = .8) +
+  geom_smooth(se = FALSE)
+```
+
+Where you define aesthetics can matter
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name), alpha = .3, size = .8) + # 1line
+  geom_smooth(se = FALSE)
+```
+
+Use faceting real quick
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .3) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name) # sep by name 
+```
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .3) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(name ~ .) # sep by name 
+```
+
+Let's make a somewhat more interesting scatterplot!
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name, size = prcp)) + # dif size of point
+  geom_point(alpha = .3) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name) # sep by name 
+```
+
+```{r, message = FALSE, warning = FALSE}
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32
+  ) |> 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) + 
+  geom_point(alpha = .3) + 
+  geom_smooth(method = "lm", se = FALSE)  
+```
+
 
 
 
